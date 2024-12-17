@@ -1,0 +1,22 @@
+version: '1.0'
+services:
+  ollama:
+    build: .
+    ports:
+      - "8901:8901"
+      - "11434:11434"
+      - "3001:3001"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    volumes:
+      - ./contents:/workspace/contents
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+              
