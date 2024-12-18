@@ -23,29 +23,26 @@ RUN pip install opencv-python
 
 RUN pip install jupyterlab
 
+RUN pip install ollama
+
+RUN pip install rich
+
+RUN pip install requests
+
+RUN pip install argparse
+
 RUN apt install python-is-python3 -y
-
-# install the replacement of systemctl for docker
-# this is rather necessary as for the explaination of why check: 
-# https://github.com/gdraheim/docker-systemctl-replacement/blob/master/README.md
-COPY systemctl3.py /usr/bin/systemctl
-
-RUN chmod +x /usr/bin/systemctl
-
-RUN test -e /bin/systemctl || ln -sf /usr/bin/systemctl /bin/systemctl
 
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
 ENV OLLAMA_HOST=0.0.0.0
 
-# enable ollama
-RUN systemctl daemon-reload
-RUN systemctl enable ollama
-RUN systemctl start ollama
+COPY pull_ollama_model.sh .
+RUN chmod +x pull_ollama_model.sh
+RUN ./pull_ollama_model.sh
 
-COPY start-ollama.sh .
-RUN chmod +x start-ollama.sh
-RUN ./start-ollama.sh
+RUN chmod -R 777 /root/.ollama
 
+COPY entrypoint.sh /entrypoint.sh
 
-CMD ["systemctl", "start", "ollama"]
+ENTRYPOINT [ "/bin/bash", "/entrypoint.sh" ]

@@ -1,17 +1,17 @@
 version: '1.0'
 services:
   ollama:
+    container_name: ollama
+    pull_policy: always
     build: .
     ports:
-      - "8901:8901"
+      - "8888:8888"
       - "11434:11434"
-      - "3001:3001"
+      - "80:3000"
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     volumes:
       - ./contents:/workspace/contents
-    extra_hosts:
-    - "host.docker.internal:host-gateway"
     deploy:
       resources:
         reservations:
